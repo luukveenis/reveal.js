@@ -1,0 +1,319 @@
+<!doctype html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+
+    <title>LLVM - An Overview</title>
+
+    <meta name="description" content="Compiler and toolchain technologies">
+    <meta name="author" content="Luuk Veenis">
+
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <link rel="stylesheet" href="css/reveal.css">
+    <link rel="stylesheet" href="css/theme/black.css" id="theme">
+
+    <!-- Theme used for syntax highlighting of code -->
+    <link rel="stylesheet" href="lib/css/zenburn.css">
+  </head>
+
+  <body>
+
+    <div class="reveal">
+
+      <!-- Any section element inside of this container is displayed as a slide -->
+      <div class="slides">
+        <section data-markdown>
+          <script type="text/template">
+            # LLVM
+          </script>
+        </section>
+
+        <section>
+          <h2>Overview</h2>
+          <ul>
+            <li>Why this topic?</li>
+            <li>What is a compiler?</li>
+            <li>What is LLVM?</li>
+            <li>What's good about it?</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Why LLVM?</h2>
+          <p>Last term at UVic took a course on compiler construction</p>
+          <p>Built a compiler for Go, sort of...</p>
+        </section>
+
+        <section>
+          <h2>What is a compiler?</h2>
+          <p>Translator from a high-level language to a low level language</p>
+          <ul>
+            <li>Java -> Bytecode </li>
+            <li>C -> Assembly</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Traditional View of a Compiler</h3>
+          <img style="width: 100%" src="images/llvm/traditional_compiler.png">
+        </section>
+
+        <section>
+          <h3>Compiler Internals</h3>
+          <img style="width: 100%" src="images/llvm/compiler_internals.png">
+        </section>
+
+        <section>
+          <h3>Frontend vs. Backend</h3>
+          <img style="width: 100%" src="images/llvm/compiler_front_back.png">
+        </section>
+
+        <section>
+          <h2>Frontend</h2>
+          <ul>
+            <li>
+              Scanner (Lexer)
+              <ul><li>Tokenize input based on grammar</li></ul>
+            </li>
+            <li>
+              Parser
+              <ul><li>Builds AST and analyzes syntax</li></ul>
+            </li>
+            <li>
+              Semantic Analysis
+              <ul><li>Traverse AST and check datatypes</li></ul>
+            </li>
+            <li>
+              Code Generation
+              <ul><li>Many possible representations used for further transformation</li></ul>
+            </li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>History</h2>
+          <p>LLVM project started in 2000 at the University of Illinois by Vikram Adve and Chris Lattner</p>
+          <p>Research infrastructure for dynamic compilation of static and dynamic languages</p>
+          <p>In 2005 Apple hired Chris Lattner</p>
+        </section>
+
+        <section>
+          <h2>What is LLVM?</h2>
+          <p style="text-decoration: line-through;">Low Level Virtual Machine</p>
+          <blockquote>
+            "a collection of modular and reusable compiler and toolchain technologies"
+          </blockquote>
+        </section>
+
+        <section>
+          <h2>WTF does that mean?</h2>
+          <p>LLVM is a suite of tools used to build compilers:</p>
+          <ul>
+            <li><span style="color: red">LLVM IR</span> - LLVM Intermediate Representation</li>
+            <li><span style="color: red">llc</span> - static compiler that compiles LLVM IR into target assembly</li>
+            <li><span style="color: red">lli</span> - LLVM's interpreter with JIT code generation</li>
+            <li><span style="color: red">llvm-mc</span> - LLVM Machine code playground</li>
+            <li><span style="color: red">clang</span> - LLVM's native C/C++ frontend</li>
+            <li>... etc</li>
+          </ul>
+        </section>
+
+        <section>
+          <section>
+            <h2>LLVM IR</h2>
+            <pre>
+              <code class="hljs" data-trim contenteditable>
+              #include &lt;stdio.h&gt;
+
+              int main() {
+                printf("Hello, world!\n");
+
+                return 0;
+              }
+              </code>
+            </pre>
+          </section>
+
+          <section>
+            <q>$ clang -O3 -emit-llvm -c example.c -o example.bc</q>
+            <pre style="font-size: 0.3em;">
+              <code class="hljs" data-trim contenteditable style="overflow: hidden;">
+BC&Agrave;&THORN;5^T^@^@^E^@^@^@b^L0$IY&frac34;&aelig;&iacute;&oacute;&gt;-D^A2^E^@^@^@^@!^L^@^@P^A^@^@^K&lt;82&gt; ^@^B^@^@^@^S^@^@^@^G&lt;81&gt;#&lt;91&gt;A&Egrave;^DI^F^P29&lt;92&gt;^A&lt;84&gt;^L%^E^H^Y^^^D&lt;8b&gt;b&lt;80&gt;^PE^BB&lt;92&gt;^KB&lt;84&gt;^P2^T8^H^XK
+2B&lt;88&gt;H&lt;90&gt;^T CF&lt;88&gt;&yen;^@^Y2B&auml;H^N&lt;90&gt;^Q&quot;&Auml;PAQ&lt;81&gt;&lt;8c&gt;&aacute;&lt;83&gt;&aring;&lt;8a&gt;^D!F^FQ^X^@^@c^@^@^@^[T$&oslash;&yuml;&yuml;&yuml;&yuml;^A&lt;90&gt;&lt;80&gt;0 &Egrave;!^]&aelig;!^\&Auml;&lt;81&gt;^]&Ecirc;&iexcl;^M&egrave;!^\&Ograve;&lt;81&gt;^]&Uacute;`^\&Acirc;&lt;81&gt;^]&Oslash;a^^^@s^H^Gv&lt;98&gt;&lt;87&gt;r^@^Hv(&lt;87&gt;y&lt;98&gt;&lt;87&gt;6&lt;80&gt;^Gy(&lt;87&gt;qH&lt;87&gt;y(&lt;87&gt;60^Gxh&lt;87&gt;p ^G&Agrave;^\&Acirc;&lt;81&gt;^]&aelig;&iexcl;^\^@&Acirc;^]&THORN;&iexcl;^M&Igrave;A^^&Acirc;&iexcl;^]&Ecirc;&iexcl;^M&agrave;&aacute;^]&Ograve;&Aacute;^]&egrave;&iexcl;^\&auml;&iexcl;^M&Ecirc;&lt;81&gt;^]&Ograve;&iexcl;^]^@s^H^Gv&lt;98&gt;&lt;87&gt;r^@^Hwx&lt;87&gt;6H^Gw0&lt;87&gt;yh^Cs&lt;80&gt;&lt;87&gt;6h&lt;87&gt;p&nbsp;^Gt^@&Igrave;!^\&Oslash;a^^&Ecirc;^A &Uuml;&aacute;^]&Uacute;&Agrave;^]&Acirc;&Aacute;^]&aelig;&iexcl;^M&Igrave;^A^^&Uacute;&nbsp;^]&Acirc;&lt;81&gt;^^&ETH;^A0&lt;87&gt;p`&lt;87&gt;y(^G&lt;80&gt;&lt;98&gt;^Gz^H&lt;87&gt;qX&lt;87&gt;6&lt;80&gt;^Gyx^Gz(&lt;87&gt;q&nbsp;&lt;87&gt;w&lt;90&gt;&lt;87&gt;6^P&lt;87&gt;z0^Gs(^Gyh&lt;83&gt;yH^G}(^G^@^O^@&lt;82&gt;^^&Acirc;A^^&Icirc;&iexcl;^\&egrave;&iexcl;^M&AElig;^A^^&ecirc;^A&Agrave;^G&lt;&deg;&lt;83&gt;6&deg;^C:^@^Hz^H^Gy8&lt;87&gt;r&nbsp;&lt;87&gt;60&lt;87&gt;r^H^Gz&uml;^Gy(&lt;87&gt;y^@&Ouml;&Agrave;^\&eth;a^^&auml;&lt;81&gt;^M&Ouml;&nbsp;^]&Uacute;^A^_&Oslash;`^M&aelig;a^^&Ecirc;&lt;81&gt;^M&Ouml;`^^&aelig;&iexcl;^\&auml;^@ &ecirc;&Aacute;^]&aelig;!^\&Igrave;&iexcl;^\&Uacute;&Agrave;^\&agrave;&iexcl;^M&Uacute;!^\&egrave;^A^]^@s^H^Gv&lt;98&gt;&lt;87&gt;r^@&lt;88&gt;z&lt;98&gt;&lt;87&gt;rh&lt;83&gt;yx^Gs&nbsp;&lt;87&gt;60^Gvx&lt;87&gt;p&nbsp;^G&Agrave;^\&Acirc;&lt;81&gt;^]&aelig;&iexcl;^\&lt;80&gt;^M&lt;84&gt;^P^@&Euml;^Fb&oslash;&yuml;&yuml;&yuml;&yuml;^A&lt;90&gt;^@^@I^X^@^@^B^@^@^@^S&lt;82&gt;`&lt;82&gt; ^L^@^@&lt;89&gt; ^@^@^N^@^@^@2&quot;^H&raquo;&middot;&middot;&middot;&middot;&middot; d&lt;85&gt;^D^S&quot;&curren;&lt;84&gt;^D^S&quot;&atilde;&lt;84&gt;&iexcl;&lt;90&gt;^T^RL&lt;88&gt;&lt;8c&gt;^K&lt;84&gt;&lt;84&gt;L^P0s^DH:^@&Aring;^\^A^X&lt;94&gt;`&lt;88&gt;^H&lt;8a&gt;0F7^P0G^@
+#^@^@^@^S&amp;|&Agrave;^C;&oslash;^E;&nbsp;&lt;83&gt;6&lt;80&gt;&lt;87&gt;qh^CvH^Gw&uml;^G|h&lt;83&gt;sp&lt;87&gt;z&Oslash;P^F&aring;&ETH;^F&iacute;&nbsp;^G&aring;&ETH;^F&eacute;`^Gt&nbsp;^Gv@^Gm`^Nx^@^Gz^P^Gr&lt;80&gt;^Gm&agrave;^Nx&nbsp;^Gq`^Gz0^Gr&nbsp;^Gv@^Gm0^Kq ^Gx&nbsp;&oacute;@^B^Y2R^B^D&Oslash;&Aacute;^D^C&lt;91&gt;^@^@^@^D^@^@^Ly^H^@^@^B^@^@^@^@^@^@^@^X&ograve;^\@^@^H^@^@^@^@^@^@^@ &ntilde;&lt;81&gt;L^E&lt;89&gt;^M^B&lt;85&gt;&lt;9d&gt;^B^@^@&sup2;@^@^@^@^H^@^@^@2^^&lt;98&gt;^L^Y^QL&lt;90&gt;&lt;8c&gt;&raquo;&middot;&middot;&amp;G&AElig;^DC
+m&lt;90&gt;e6&ucirc;&Iacute;^B]&szlig;r69^D^@^@^@y^X^@^@^T^@^@^@^Z^CL&lt;90&gt;F^B^S&Auml;:^Xc^Ks;^C&plusmn;+&lt;93&gt;&lt;9b&gt;K{s^C&lt;99&gt;q&Aacute;q&lt;81&gt;i&lt;91&gt;&copy;^S&laquo;s&pound;&laquo;&pound;^AA&iexcl;^K;&lt;9b&gt;{&lt;91&gt;*b*
+&lt;9a&gt;*&uacute;&lt;9a&gt;&Aacute;&lt;81&gt;y1Ks^KcK&Ugrave;^P^DU&Oslash;&Oslash;&igrave;&Uacute;\&Ograve;&Egrave;&Ecirc;&Uuml;&egrave;&brvbar;^D^A^@&plusmn;^X^@^@V^@^@^@3^H&lt;80&gt;^\&Auml;&aacute;^\f^T^A=&lt;88&gt;C8&lt;84&gt;&Atilde;&lt;8c&gt;B&lt;80&gt;^Gyx^Gs&lt;98&gt;q^L&aelig;^@^O&iacute;^P^N&ocirc;&lt;80&gt;^N3^LB^^&Acirc;&Aacute;^]&Icirc;&iexcl;^\f0^E=&lt;88&gt;C8&lt;84&gt;&lt;83&gt;^[&Igrave;^C=&Egrave;C=&lt;8c&gt;^C=&Igrave;x&lt;8c&gt;tp^G{^H^GyH&lt;87&gt;pp^Gzp^Cvx&lt;87&gt;p &lt;87&gt;^Y&Igrave;^Q^N&igrave;&lt;90&gt;^N&aacute;0^On0^O&atilde;&eth;^N&eth;P^N3^P&Auml;^]&THORN;!^\&Oslash;!^]&Acirc;a^^f0&lt;89&gt;;&frac14;&lt;83&gt;;&ETH;C9&acute;^C&lt;&frac14;&lt;83&gt;&lt;&lt;84&gt;^C;&Igrave;&eth;^Tv`^G{h^G7h&lt;87&gt;rh^G7&lt;80&gt;&lt;87&gt;p&lt;90&gt;&lt;87&gt;p`^Gv(^Gv&oslash;^Evx&lt;87&gt;w&lt;80&gt;&lt;87&gt;_^H&lt;87&gt;q^X&lt;87&gt;r&lt;98&gt;&lt;87&gt;y&lt;98&gt;&lt;81&gt;,&icirc;&eth;^N&icirc;&agrave;^N&otilde;&Agrave;^N&igrave;0^Cb&Egrave;&iexcl;^\&auml;&iexcl;^\&Igrave;&iexcl;^\&auml;&iexcl;^\&Uuml;a^\&Ecirc;!^\&Auml;&lt;81&gt;^]&Ecirc;a^F&Ouml;&lt;90&gt;C9&Egrave;C9&lt;98&gt;C9&Egrave;C9&cedil;&Atilde;8&lt;94&gt;C8&lt;88&gt;
+              </code>
+            </pre>
+          </section>
+
+          <section>
+            <pre>
+              <code>
+                $ lli example.bc
+                $ Hello, world!
+              </code>
+            </pre>
+          </section>
+
+          <section>
+            <q>clang -O3 -emit-llvm -S example.c -o example.ll</q>
+            <pre style="font-size: 0.3em;">
+              <code class="hljs" data-trim contenteditable style="overflow: hidden;">
+                ; ModuleID = 'example.c'
+                target datalayout = "e-m:e-i64:64-f80:128-n8:16:32:64-S128"
+                target triple = "x86_64-pc-linux-gnu"
+
+                @str = private unnamed_addr constant [14 x i8] c"Hello, World!\00"
+
+                ; Function Attrs: nounwind uwtable
+                define i32 @main() #0 {
+                  %puts = tail call i32 @puts(i8* getelementptr inbounds ([14 x i8], [14 x i8]* @str, i64 0, i64 0))
+                  ret i32 0
+                }
+
+                ; Function Attrs: nounwind
+                declare i32 @puts(i8* nocapture) #1
+
+                attributes #0 = { nounwind uwtable "disable-tail-calls"="false" "less-precise-fpmad"="false" "no-frame-pointer-elim"="false" "no-infs-fp-math"="false" "no-nans-fp-math"="false" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+fxsr,+mmx,+sse,+sse2" "unsafe-fp-math"="false" "use-soft-float"="false" }
+                attributes #1 = { nounwind }
+
+                !llvm.ident = !{!0}
+
+                !0 = !{!"clang version 3.8.0-2ubuntu4 (tags/RELEASE_380/final)"}
+              </code>
+            </pre>
+          </section>
+        </section>
+
+        <section>
+          <h2>More on LLVM IR</h2>
+          <p>Uses unlimited SSA register machine instruction set</p>
+          <p>Each register can only be assigned once</p>
+          <p>Makes analysis and optimization much easier</p>
+          <p>ie: Liveness analysis</p>
+        </section>
+
+        <section>
+          <section>
+            <pre>
+              <code>
+                int main(){
+                  int i = 1;
+                  i = i * 2;
+
+                  return 0;
+                }
+              </code>
+            </pre>
+          </section>
+          <section>
+            <p>$ clang -emit-llvm -S example.c</p>
+            <pre>
+              <code>
+      ; Function Attrs: nounwind uwtable
+      define i32 @main() #0 {
+        %1 = alloca i32, align 4
+        %i = alloca i32, align 4
+        store i32 0, i32* %1, align 4
+        store i32 1, i32* %i, align 4
+        %2 = load i32, i32* %i, align 4
+        %3 = mul nsw i32 %2, 2
+        store i32 %3, i32* %i, align 4
+        ret i32 0
+      }
+                </code>
+            </pre>
+          </section>
+          <section>
+            <p>$ clang -O1 -emit-llvm -S example.c</p>
+            <pre>
+              <code>
+      ; Function Attrs: norecurse nounwind readnone uwtable
+      define i32 @main() #0 {
+        ret i32 0
+      }
+              </code>
+            </pre>
+          </section>
+        </section>
+
+        <section>
+          <h2>What's good about it?</h2>
+          <ul>
+              <li><span style="color: red">Decouples the frontend and backend</span></li>
+            <li>Allows you to (relatively) easily create frontends for any language</li>
+            <li>Supports many instruction sets: ARM, x86/x86-64, Hexagon, MIPS, PowerPC</li>
+            <li>Supports JIT compilation (similar to JVM)</li>
+            <li>Excellent optimization support</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Rubinius</h2>
+          <p>LLVM meets Ruby</p>
+          <p>VM went through lots of iterations: C, C++, LLVM</p>
+          <p>Use LLVM to handle JIT compilation</p>
+          <p>Mixed results</p>
+          <p>Initial startup went from 0.3s to 80s</p>
+          <p>JIT improved things a lot</p>
+        </section>
+
+        <section>
+          <h2>Other LLVM Projects</h2>
+          <p><span style="color: red">Rust</span> - static and native compilation handled by LLVM</p>
+          <p><span style="color: red">MacRuby</span> - Objective-C runtime and GC, LLVM compilation</p>
+          <p><span style="color: red">NVPTX</span> - Nvidia parallel thread execution backend (CUDA)</p>
+        </section>
+
+        <section>
+          <h2>Further Discussion</h2>
+          <p>Building the Frontend for Go</p>
+          <p>Parser generators</p>
+          <p>LL parsing vs. LR parsing</p>
+          <p>Liveness Analysis</p>
+          <p>Code generation</p>
+          <p>Instruction scheduling</p>
+        </section>
+
+        <section>
+          <h1>Thanks!</h1>
+        </section>
+      </div>
+
+    </div>
+
+    <script src="lib/js/head.min.js"></script>
+    <script src="js/reveal.js"></script>
+
+    <script>
+
+      // More info https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        controls: true,
+        progress: true,
+        history: true,
+        center: true,
+
+        transition: 'slide', // none/fade/slide/convex/concave/zoom
+
+        // More info https://github.com/hakimel/reveal.js#dependencies
+        dependencies: [
+        { src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+        { src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+        { src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+        { src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+        { src: 'plugin/zoom-js/zoom.js', async: true },
+        { src: 'plugin/notes/notes.js', async: true }
+        ]
+      });
+
+    </script>
+
+  </body>
+</html>
